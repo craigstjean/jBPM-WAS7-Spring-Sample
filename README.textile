@@ -26,7 +26,8 @@ h2. Project Preparation
 
 h1. Questionable Items
 
-* Is JbpmService used in this way thread safe causing overhead?
+* Is JbpmService used in this way thread safe?
+* Is JbpmService used in this way causing overhead?
 * Is the way roomResolver is passed into the flow correct?  Better way?
 
 h1. Current Issues
