@@ -1,0 +1,165 @@
+h1. Introduction
+
+This is a sample jBPM 5.4 project that leverages the following technologies:
+
+* jBPM 5.4
+* WebSphere Application Server 7.0
+* JPA 1
+* Oracle
+* Spring MVC
+
+The goal of the project is a very basic customer / clerk interaction at a hotel with the following steps:
+
+# Customer Requests Room
+# Clerk Looks for Rooms
+# A service returns a room number, or a default for no rooms
+# If no rooms, Clerk Tells Customer No Rooms
+# If there was a room, Clerk Gives Room Number
+# End
+
+h2. Project Preparation
+
+# Load WorkflowTestWeb/doc/jbpmschemaexport.sql into Oracle
+# Load WorkflowTestWeb/doc/htschemaexport.sql into Oracle
+# Create jdbc/jBPM_TestDS Data Source in WebSphere pointing to Oracle (then restart WebSphere)
+# Deploy EAR project to WebSphere
+
+h1. Questionable Items
+
+* LocalHTWorkItemHandler cannot be declared in Spring using jbpm:work-item-handlers because it needs ksession in the constructor
+* Prior to starting a process, we are setting the taskService on the LocalHTWorkItemHandler and registering it.  This can't be right.
+* Is TaskService used in this way thread safe?  Concurrency issues?
+* Is the way roomResolver is passed into the flow correct?  Better way?
+
+h1. Current Issues
+
+On application startup, get the following error:
+
+{code}
+[9/25/13 9:41:49:866 EDT] 0000001c SystemOut     O 1    25/09 09:41:49,859[ORB.thread.pool : 1] ERROR transaction.support.TransactionSynchronizationUtils.invokeAfterCompletion  - TransactionSynchronization.afterCompletion threw exception
+    java.lang.AbstractMethodError: org/drools/persistence/PersistenceContextManager.clearPersistenceContext()V
+    at org.drools.persistence.SingleSessionCommandService$SynchronizationImpl.afterCompletion(SingleSessionCommandService.java:448)
+    at org.drools.container.spring.beans.persistence.SpringTransactionSynchronizationAdapter.afterCompletion(SpringTransactionSynchronizationAdapter.java:37)
+    at org.springframework.transaction.support.TransactionSynchronizationUtils.invokeAfterCompletion(TransactionSynchronizationUtils.java:168)
+    at org.springframework.transaction.support.AbstractPlatformTransactionManager.invokeAfterCompletion(AbstractPlatformTransactionManager.java:993)
+    at org.springframework.transaction.support.AbstractPlatformTransactionManager.triggerAfterCompletion(AbstractPlatformTransactionManager.java:968)
+    at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:799)
+    at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:723)
+    at org.drools.container.spring.beans.persistence.DroolsSpringTransactionManager.commit(DroolsSpringTransactionManager.java:65)
+    at org.drools.persistence.SingleSessionCommandService.<init>(SingleSessionCommandService.java:155)
+    at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+    at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:56)
+    at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:39)
+    at java.lang.reflect.Constructor.newInstance(Constructor.java:527)
+    at org.drools.persistence.jpa.KnowledgeStoreServiceImpl.buildCommandService(KnowledgeStoreServiceImpl.java:128)
+    at org.drools.persistence.jpa.KnowledgeStoreServiceImpl.newStatefulKnowledgeSession(KnowledgeStoreServiceImpl.java:66)
+    at org.drools.persistence.jpa.JPAKnowledgeService.newStatefulKnowledgeSession(JPAKnowledgeService.java:122)
+    at org.drools.container.spring.beans.StatefulKnowledgeSessionBeanFactory.internalAfterPropertiesSet(StatefulKnowledgeSessionBeanFactory.java:85)
+    at org.drools.container.spring.beans.AbstractKnowledgeSessionBeanFactory.afterPropertiesSet(AbstractKnowledgeSessionBeanFactory.java:123)
+    at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1545)
+    at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1483)
+    at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+    at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+    at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:295)
+    at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:223)
+    at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:292)
+    at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:194)
+    at org.springframework.beans.factory.support.DefaultListableBeanFactory.findAutowireCandidates(DefaultListableBeanFactory.java:873)
+    at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:815)
+    at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:730)
+    at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:486)
+    at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:87)
+    at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:285)
+    at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1120)
+    at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:522)
+    at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+    at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:295)
+    at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:223)
+    at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:292)
+    at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:194)
+    at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:607)
+    at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:932)
+    at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:479)
+    at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:383)
+    at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:283)
+    at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:112)
+    at com.ibm.ws.webcontainer.webapp.WebApp.notifyServletContextCreated(WebApp.java:1717)
+    at com.ibm.ws.webcontainer.webapp.WebApp.commonInitializationFinish(WebApp.java:384)
+    at com.ibm.ws.webcontainer.webapp.WebAppImpl.initialize(WebAppImpl.java:299)
+    at com.ibm.ws.webcontainer.webapp.WebGroupImpl.addWebApplication(WebGroupImpl.java:100)
+    at com.ibm.ws.webcontainer.VirtualHostImpl.addWebApplication(VirtualHostImpl.java:166)
+    at com.ibm.ws.webcontainer.WSWebContainer.addWebApp(WSWebContainer.java:732)
+    at com.ibm.ws.webcontainer.WSWebContainer.addWebApplication(WSWebContainer.java:617)
+    at com.ibm.ws.webcontainer.component.WebContainerImpl.install(WebContainerImpl.java:376)
+    at com.ibm.ws.webcontainer.component.WebContainerImpl.start(WebContainerImpl.java:668)
+    at com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:1127)
+    at com.ibm.ws.runtime.component.DeployedApplicationImpl.fireDeployedObjectStart(DeployedApplicationImpl.java:1319)
+    at com.ibm.ws.runtime.component.DeployedModuleImpl.start(DeployedModuleImpl.java:611)
+    at com.ibm.ws.runtime.component.ApplicationMgrImpl.startModule(ApplicationMgrImpl.java:1572)
+    at com.ibm.ws.runtime.component.ApplicationMgrImpl._startModule(ApplicationMgrImpl.java:1520)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at sun.reflect.misc.Trampoline.invoke(MethodUtil.java:49)
+    at sun.reflect.GeneratedMethodAccessor33.invoke(Unknown Source)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at sun.reflect.misc.MethodUtil.invoke(MethodUtil.java:256)
+    at javax.management.modelmbean.RequiredModelMBean.invokeMethod(RequiredModelMBean.java:1085)
+    at javax.management.modelmbean.RequiredModelMBean.invoke(RequiredModelMBean.java:966)
+    at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:848)
+    at com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:773)
+    at com.ibm.ws.management.AdminServiceImpl$1.run(AdminServiceImpl.java:1331)
+    at com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:118)
+    at com.ibm.ws.management.AdminServiceImpl.invoke(AdminServiceImpl.java:1224)
+    at com.ibm.ws.management.application.sync.StartDeploymentTask.startDeployment(StartDeploymentTask.java:246)
+    at com.ibm.ws.management.application.sync.StartDeploymentTask.fineGrainUpdate(StartDeploymentTask.java:197)
+    at com.ibm.ws.management.application.sync.StartDeploymentTask.performTask(StartDeploymentTask.java:104)
+    at com.ibm.ws.management.application.sync.AppBinaryProcessor$ExpandApp.expand(AppBinaryProcessor.java:1682)
+    at com.ibm.ws.management.application.sync.AppBinaryProcessor.postProcessSynchronousExt(AppBinaryProcessor.java:723)
+    at com.ibm.ws.management.bla.sync.BLABinaryProcessor.postProcess(BLABinaryProcessor.java:575)
+    at com.ibm.ws.management.bla.sync.BLABinaryProcessor.onChangeCompletion(BLABinaryProcessor.java:452)
+    at com.ibm.ws.management.repository.FileRepository.postNotify(FileRepository.java:1916)
+    at com.ibm.ws.management.repository.FileRepository.update(FileRepository.java:1425)
+    at com.ibm.ws.management.repository.client.LocalConfigRepositoryClient.update(LocalConfigRepositoryClient.java:189)
+    at com.ibm.ws.sm.workspace.impl.WorkSpaceMasterRepositoryAdapter.update(WorkSpaceMasterRepositoryAdapter.java:665)
+    at com.ibm.ws.sm.workspace.impl.RepositoryContextImpl.update(RepositoryContextImpl.java:1954)
+    at com.ibm.ws.sm.workspace.impl.RepositoryContextImpl.synch(RepositoryContextImpl.java:1902)
+    at com.ibm.ws.sm.workspace.impl.WorkSpaceImpl.synch(WorkSpaceImpl.java:511)
+    at com.ibm.ws.management.configservice.ConfigServiceImpl.save(ConfigServiceImpl.java:702)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at sun.reflect.misc.Trampoline.invoke(MethodUtil.java:49)
+    at sun.reflect.GeneratedMethodAccessor33.invoke(Unknown Source)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at sun.reflect.misc.MethodUtil.invoke(MethodUtil.java:256)
+    at javax.management.modelmbean.RequiredModelMBean.invokeMethod(RequiredModelMBean.java:1085)
+    at javax.management.modelmbean.RequiredModelMBean.invoke(RequiredModelMBean.java:966)
+    at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:848)
+    at com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:773)
+    at com.ibm.ws.management.AdminServiceImpl$1.run(AdminServiceImpl.java:1331)
+    at com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:118)
+    at com.ibm.ws.management.AdminServiceImpl.invoke(AdminServiceImpl.java:1224)
+    at com.ibm.ws.management.remote.AdminServiceForwarder.invoke(AdminServiceForwarder.java:346)
+    at javax.management.remote.rmi.RMIConnectionImpl.doOperation(RMIConnectionImpl.java:1438)
+    at javax.management.remote.rmi.RMIConnectionImpl.access$200(RMIConnectionImpl.java:83)
+    at javax.management.remote.rmi.RMIConnectionImpl$PrivilegedOperation.run(RMIConnectionImpl.java:1276)
+    at javax.management.remote.rmi.RMIConnectionImpl.doPrivilegedOperation(RMIConnectionImpl.java:1371)
+    at javax.management.remote.rmi.RMIConnectionImpl.invoke(RMIConnectionImpl.java:799)
+    at javax.management.remote.rmi._RMIConnectionImpl_Tie.invoke(_RMIConnectionImpl_Tie.java:751)
+    at javax.management.remote.rmi._RMIConnectionImpl_Tie._invoke(_RMIConnectionImpl_Tie.java:158)
+    at com.ibm.CORBA.iiop.ServerDelegate.dispatchInvokeHandler(ServerDelegate.java:585)
+    at com.ibm.CORBA.iiop.ServerDelegate.dispatch(ServerDelegate.java:461)
+    at com.ibm.rmi.iiop.ORB.process(ORB.java:533)
+    at com.ibm.CORBA.iiop.ORB.process(ORB.java:1574)
+    at com.ibm.rmi.iiop.Connection.respondTo(Connection.java:2915)
+    at com.ibm.rmi.iiop.Connection.doWork(Connection.java:2782)
+    at com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java:65)
+    at com.ibm.ejs.oa.pool.PooledThread.run(ThreadPool.java:118)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1646)
+{code}
+

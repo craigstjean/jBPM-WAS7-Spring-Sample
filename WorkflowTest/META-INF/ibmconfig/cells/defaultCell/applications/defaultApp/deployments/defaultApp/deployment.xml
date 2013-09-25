@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appdeployment:Deployment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:appdeployment="http://www.ibm.com/websphere/appserver/schemas/5.0/appdeployment.xmi" xmi:id="Deployment_1380051449617">
+  <deployedObject xmi:type="appdeployment:ApplicationDeployment" xmi:id="ApplicationDeployment_1380051449617" startingWeight="10">
+    <modules xmi:type="appdeployment:WebModuleDeployment" xmi:id="WebModuleDeployment_1380051449617" startingWeight="10000" uri="WorkflowTestWeb.war" classloaderMode="PARENT_LAST"/>
+    <classloader xmi:id="Classloader_1380051449617" mode="PARENT_LAST"/>
+  </deployedObject>
+</appdeployment:Deployment>
