@@ -234,10 +234,10 @@
     <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
     <sequenceFlow id="_2-_3" sourceRef="_2" targetRef="_3" />
     <sequenceFlow id="_7-_4" sourceRef="_7" targetRef="_4" />
-    <sequenceFlow id="_4-_5" sourceRef="_4" targetRef="_5" name="constraint" tns:priority="1" >
+    <sequenceFlow id="_4-_5" sourceRef="_4" targetRef="_5" name="NoRoomNumber" tns:priority="1" >
       <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return roomNumber &lt;= 0;</conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_4-_6" sourceRef="_4" targetRef="_6" name="constraint" tns:priority="1" >
+    <sequenceFlow id="_4-_6" sourceRef="_4" targetRef="_6" name="RoomNumber" tns:priority="1" >
       <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >return roomNumber &gt; 0;</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="_3-_7" sourceRef="_3" targetRef="_7" />
