@@ -26,43 +26,7 @@
 	
 	<jbpm:kbase id="kbase">
 		<jbpm:resources>
-			<jbpm:resource type="BPMN2" source="classpath:com/craigstjean/workflow/bpmn/hotel.bpmn" />
+			<jbpm:resource source="classpath:com/craigstjean/workflow/bpmn/hotel.bpmn" type="BPMN2" />
 		</jbpm:resources>
 	</jbpm:kbase>
-	
-	<jbpm:ksession id="ksession" type="stateful" kbase="kbase">
-		<jbpm:configuration>
-			<jbpm:jpa-persistence>
-				<jbpm:transaction-manager ref="transactionManager" />
-				<jbpm:entity-manager-factory ref="entityManagerFactory" />
-			</jbpm:jpa-persistence>
-		</jbpm:configuration>
-	</jbpm:ksession>
-	
-	<bean name="workItemHandler" class="org.jbpm.process.workitem.wsht.LocalHTWorkItemHandler">
-		<constructor-arg ref="ksession" />
-	</bean>
-	
-	<bean id="systemEventListener" class="org.drools.SystemEventListenerFactory" factory-method="getSystemEventListener" />
-	
-	<bean id="internalTaskService" class="org.jbpm.task.service.TaskService">
-		<constructor-arg ref="entityManagerFactory" />
-		<constructor-arg ref="systemEventListener" />
-	</bean>
-	
-	<bean id="htTxManager" class="org.drools.container.spring.beans.persistence.HumanTaskSpringTransactionManager">
-		<constructor-arg ref="transactionManager" />
-	</bean>
-	
-	<bean id="springTaskSessionFactory" class="org.jbpm.task.service.persistence.TaskSessionSpringFactoryImpl"
-			init-method="initialize" depends-on="internalTaskService">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-		<property name="transactionManager" ref="htTxManager" />
-		<property name="useJTA" value="true" />
-		<property name="taskService" ref="internalTaskService" />
-	</bean>
-	  
-	<bean id="taskService" class="org.jbpm.task.service.local.LocalTaskService" depends-on="internalTaskService">
-		<constructor-arg ref="internalTaskService" />
-	</bean>
 </beans>

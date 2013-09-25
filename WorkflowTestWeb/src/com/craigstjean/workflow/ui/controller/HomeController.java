@@ -23,7 +23,7 @@ public class HomeController {
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(
-			@RequestParam(value = "user", required = false, defaultValue = "John") String user,
+			@RequestParam(value = "user", required = false, defaultValue = "") String user,
 			final HttpSession session,
 			final Model model) {
 		session.setAttribute("user", user);
@@ -41,14 +41,16 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/process/new", method = RequestMethod.POST)
-	public String newProcess(final RedirectAttributes redirectAttributes) {
+	public String newProcess(final HttpSession session, final RedirectAttributes redirectAttributes) {
 		workflow.startProcess();
+		
+		String user = (String) session.getAttribute("user");
+		redirectAttributes.addAttribute("user", user);
 		return "redirect:/";
 	}
 	
-	@RequestMapping(value = "/process/{pid}/task/{tid}/startAndComplete", method = RequestMethod.POST)
+	@RequestMapping(value = "/task/{tid}/startAndComplete", method = RequestMethod.POST)
 	public String startAndComplete(
-			@PathVariable("pid") Long processId,
 			@PathVariable("tid") Long taskId,
 			final HttpSession session,
 			final RedirectAttributes redirectAttributes) {
@@ -57,6 +59,7 @@ public class HomeController {
 		workflow.startTask(user, taskId);
 		workflow.completeTask(user, taskId);
 		
+		redirectAttributes.addAttribute("user", user);
 		return "redirect:/";
 	}
 }

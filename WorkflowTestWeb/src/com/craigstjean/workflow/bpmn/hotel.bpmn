@@ -78,7 +78,7 @@
       <dataInputAssociation>
         <targetRef>_2_TaskNameInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression"></from>
+          <from xsi:type="tFormalExpression">Customer Requests Room</from>
           <to xsi:type="tFormalExpression">_2_TaskNameInput</to>
         </assignment>
       </dataInputAssociation>
@@ -145,7 +145,7 @@
       <dataInputAssociation>
         <targetRef>_3_TaskNameInput</targetRef>
         <assignment>
-          <from xsi:type="tFormalExpression"></from>
+          <from xsi:type="tFormalExpression">Clerk Looks for Rooms</from>
           <to xsi:type="tFormalExpression">_3_TaskNameInput</to>
         </assignment>
       </dataInputAssociation>
@@ -172,13 +172,22 @@
     <inclusiveGateway id="_4" name="Gateway" gatewayDirection="Diverging" />
     <userTask id="_5" name="Clerk Tells Customer No Rooms" >
       <ioSpecification>
+        <dataInput id="_5_TaskNameInput" name="TaskName" />
         <dataInput id="_5_GroupIdInput" name="GroupId" />
         <inputSet>
+          <dataInputRefs>_5_TaskNameInput</dataInputRefs>
           <dataInputRefs>_5_GroupIdInput</dataInputRefs>
         </inputSet>
         <outputSet>
         </outputSet>
       </ioSpecification>
+      <dataInputAssociation>
+        <targetRef>_5_TaskNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">Clerk Tells Customer No Rooms</from>
+          <to xsi:type="tFormalExpression">_5_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
       <dataInputAssociation>
         <targetRef>_5_GroupIdInput</targetRef>
         <assignment>
@@ -189,13 +198,22 @@
     </userTask>
     <userTask id="_6" name="Clerk Gives Room Number" >
       <ioSpecification>
+        <dataInput id="_6_TaskNameInput" name="TaskName" />
         <dataInput id="_6_GroupIdInput" name="GroupId" />
         <inputSet>
+          <dataInputRefs>_6_TaskNameInput</dataInputRefs>
           <dataInputRefs>_6_GroupIdInput</dataInputRefs>
         </inputSet>
         <outputSet>
         </outputSet>
       </ioSpecification>
+      <dataInputAssociation>
+        <targetRef>_6_TaskNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">Clerk Gives Room Number</from>
+          <to xsi:type="tFormalExpression">_6_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
       <dataInputAssociation>
         <targetRef>_6_GroupIdInput</targetRef>
         <assignment>

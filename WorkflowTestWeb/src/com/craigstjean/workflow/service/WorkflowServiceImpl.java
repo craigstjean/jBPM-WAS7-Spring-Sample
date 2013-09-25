@@ -7,8 +7,7 @@ import java.util.Map;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
-import org.jbpm.process.workitem.wsht.GenericHTWorkItemHandler;
-import org.jbpm.task.TaskService;
+import org.jbpm.process.workitem.wsht.LocalHTWorkItemHandler;
 import org.jbpm.task.identity.UserGroupCallback;
 import org.jbpm.task.identity.UserGroupCallbackManager;
 import org.jbpm.task.query.TaskSummary;
@@ -18,13 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WorkflowServiceImpl implements WorkflowService {
 	@Autowired
-	private StatefulKnowledgeSession ksession;
-	
-	@Autowired
-	private TaskService taskService;
-	
-	@Autowired
-	private GenericHTWorkItemHandler workItemHandler;
+	private JbpmService jbpmService;
 	
 	@Autowired
 	private RoomResolver roomResolver;
@@ -62,11 +55,12 @@ public class WorkflowServiceImpl implements WorkflowService {
 	
 	@Override
 	public Long startProcess() {
-		// TODO Are these right?  Cannot use jbpm:work-item-handlers in Spring
-		// because LocalHTWorkItemHandler takes ksession in the constructor
-		workItemHandler.setClient(taskService);
-		ksession.getWorkItemManager().registerWorkItemHandler("Human Task", workItemHandler);
-		// End TODO
+		StatefulKnowledgeSession ksession = jbpmService.getSession("com/craigstjean/workflow/bpmn/hotel.bpmn");
+		
+		LocalHTWorkItemHandler humanTaskHandler = new LocalHTWorkItemHandler(jbpmService.getTaskService(), ksession);
+		humanTaskHandler.setLocal(true);
+		humanTaskHandler.connect();
+		ksession.getWorkItemManager().registerWorkItemHandler("Human Task", humanTaskHandler);
 		
 		Map<String, Object> variables = new HashMap<String, Object>();
 		variables.put("roomResolver", roomResolver);
@@ -76,16 +70,16 @@ public class WorkflowServiceImpl implements WorkflowService {
 	
 	@Override
 	public List<TaskSummary> getTasksForUser(String user) {
-		return taskService.getTasksAssignedAsPotentialOwner(user, "en-US");
+		return jbpmService.getTaskService().getTasksAssignedAsPotentialOwner(user, "en-UK");
 	}
 	
 	@Override
 	public void startTask(String userId, Long taskId) {
-		taskService.start(taskId, userId);
+		jbpmService.getTaskService().start(taskId, userId);
 	}
 	
 	@Override
 	public void completeTask(String userId, Long taskId) {
-		taskService.complete(taskId, userId, null);
+		jbpmService.getTaskService().complete(taskId, userId, null);
 	}
 }
