@@ -32,5 +32,9 @@ h1. Questionable Items
 
 h1. Current Issues
 
+* Completing the second task causes "unable to execute ReturnValueEvaluator"
+
+h3. Fixed Issues
+
 * Completing the first task (should be Customer Requests Room) does not move the task to the next step
 

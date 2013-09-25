@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
-import org.jbpm.process.workitem.wsht.LocalHTWorkItemHandler;
 import org.jbpm.task.identity.UserGroupCallback;
 import org.jbpm.task.identity.UserGroupCallbackManager;
 import org.jbpm.task.query.TaskSummary;
@@ -56,11 +55,6 @@ public class WorkflowServiceImpl implements WorkflowService {
 	@Override
 	public Long startProcess() {
 		StatefulKnowledgeSession ksession = jbpmService.getSession("com/craigstjean/workflow/bpmn/hotel.bpmn");
-		
-		LocalHTWorkItemHandler humanTaskHandler = new LocalHTWorkItemHandler(jbpmService.getTaskService(), ksession);
-		humanTaskHandler.setLocal(true);
-		humanTaskHandler.connect();
-		ksession.getWorkItemManager().registerWorkItemHandler("Human Task", humanTaskHandler);
 		
 		Map<String, Object> variables = new HashMap<String, Object>();
 		variables.put("roomResolver", roomResolver);
