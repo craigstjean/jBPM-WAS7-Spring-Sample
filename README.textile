@@ -35,7 +35,8 @@ h1. Current Issues
 
 On application startup, get the following error:
 
-{code}
+<pre>
+<code>
 [9/25/13 9:41:49:866 EDT] 0000001c SystemOut     O 1    25/09 09:41:49,859[ORB.thread.pool : 1] ERROR transaction.support.TransactionSynchronizationUtils.invokeAfterCompletion  - TransactionSynchronization.afterCompletion threw exception
     java.lang.AbstractMethodError: org/drools/persistence/PersistenceContextManager.clearPersistenceContext()V
     at org.drools.persistence.SingleSessionCommandService$SynchronizationImpl.afterCompletion(SingleSessionCommandService.java:448)
@@ -161,5 +162,65 @@ On application startup, get the following error:
     at com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java:65)
     at com.ibm.ejs.oa.pool.PooledThread.run(ThreadPool.java:118)
     at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1646)
-{code}
+</code>
+</pre>
+
+On creating a new process I get:
+
+<pre>
+<code>
+[9/25/13 10:08:10:733 EDT] 00000027 FfdcProvider  W com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident emitted on /home/cstjean/profiles70/Workflow/logs/ffdc/server1_40194019_13.09.25_10.08.10.7311328545121454907462.txt com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest() 309
+    [9/25/13 10:08:10:734 EDT] 00000027 webapp        E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet Error]-[Spring MVC Dispatcher Servlet]: java.lang.RuntimeException: Could not commit session or rollback
+    at org.drools.persistence.SingleSessionCommandService.rollbackTransaction(SingleSessionCommandService.java:406)
+    at org.drools.persistence.SingleSessionCommandService.execute(SingleSessionCommandService.java:381)
+    at org.drools.command.impl.CommandBasedStatefulKnowledgeSession.startProcess(CommandBasedStatefulKnowledgeSession.java:223)
+    at com.craigstjean.workflow.service.WorkflowServiceImpl.startProcess(WorkflowServiceImpl.java:73)
+    at com.craigstjean.workflow.ui.controller.HomeController.newProcess(HomeController.java:45)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at org.springframework.web.method.support.InvocableHandlerMethod.invoke(InvocableHandlerMethod.java:219)
+    at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:132)
+    at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:96)
+    at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:617)
+    at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:578)
+    at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:80)
+    at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:923)
+    at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:852)
+    at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:882)
+    at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:789)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:738)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+    at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1663)
+    at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:939)
+    at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:502)
+    at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:181)
+    at com.ibm.ws.webcontainer.webapp.WebApp.handleRequest(WebApp.java:3944)
+    at com.ibm.ws.webcontainer.webapp.WebGroup.handleRequest(WebGroup.java:276)
+    at com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.java:931)
+    at com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContainer.java:1592)
+    at com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLink.java:186)
+    at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscrimination(HttpInboundLink.java:452)
+    at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewRequest(HttpInboundLink.java:511)
+    at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequest(HttpInboundLink.java:305)
+    at com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complete(HttpICLReadCallback.java:83)
+    at com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureCompleted(AioReadCompletionListener.java:165)
+    at com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyncFuture.java:217)
+    at com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncChannelFuture.java:161)
+    at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+    at com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+    at com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHandler.java:775)
+    at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1646)
+Caused by: java.lang.RuntimeException: Unable to rollback transaction
+    at org.drools.container.spring.beans.persistence.DroolsSpringTransactionManager.rollback(DroolsSpringTransactionManager.java:85)
+at org.drools.persistence.SingleSessionCommandService.rollbackTransaction(SingleSessionCommandService.java:402)
+    ... 41 more
+Caused by: org.springframework.transaction.IllegalTransactionStateException: Transaction is already completed - do not call commit or rollback more than once per transaction
+    at org.springframework.transaction.support.AbstractPlatformTransactionManager.rollback(AbstractPlatformTransactionManager.java:817)
+at org.drools.container.spring.beans.persistence.DroolsSpringTransactionManager.rollback(DroolsSpringTransactionManager.java:79)
+    ... 42 more
+</code>
+</pre>
 
