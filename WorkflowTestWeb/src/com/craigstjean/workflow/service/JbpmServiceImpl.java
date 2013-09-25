@@ -26,14 +26,20 @@ public class JbpmServiceImpl implements JbpmService {
 	@Autowired
 	private KnowledgeBase kbase;
 	
+	private StatefulKnowledgeSession ksession = null;
+	
 	@Override
 	public StatefulKnowledgeSession getSession(String flowPath) {
+		if (ksession != null) {
+			return ksession;
+		}
+		
 		Environment env = EnvironmentFactory.newEnvironment();
         env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, emf);
         env.set(EnvironmentName.TRANSACTION_MANAGER, new ContainerManagedTransactionManager());
         env.set(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER, new JpaProcessPersistenceContextManager(env));
         
-		StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(null, env);
+		ksession = kbase.newStatefulKnowledgeSession(null, env);
 		return ksession;
 	}
 	
