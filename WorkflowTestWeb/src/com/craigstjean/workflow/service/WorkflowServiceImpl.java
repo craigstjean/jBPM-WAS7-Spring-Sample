@@ -58,6 +58,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		
 		Map<String, Object> variables = new HashMap<String, Object>();
 		variables.put("roomResolver", roomResolver);
+		variables.put("roomNumber", -1);
 		ProcessInstance processInstance = ksession.startProcess("com.craigstjean.workflow.bpmn.hotel", variables);
 		return processInstance.getId();
 	}
