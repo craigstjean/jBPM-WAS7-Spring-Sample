@@ -12,25 +12,21 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
-  <itemDefinition id="_roomResolverItem" structureRef="com.craigstjean.workflow.service.RoomResolver" />
   <itemDefinition id="_roomNumberItem" structureRef="Integer" />
 
-  <itemDefinition id="_2-roomResolverItem" structureRef="com.craigstjean.workflow.service.RoomResolver" />
   <itemDefinition id="_2-roomNumberItem" structureRef="Integer" />
 
-  <itemDefinition id="_3-roomResolverItem" structureRef="com.craigstjean.workflow.service.RoomResolver" />
   <itemDefinition id="_3-roomNumberItem" structureRef="Integer" />
 
-  <itemDefinition id="_5-roomResolverItem" structureRef="com.craigstjean.workflow.service.RoomResolver" />
   <itemDefinition id="_5-roomNumberItem" structureRef="Integer" />
 
-  <itemDefinition id="_6-roomResolverItem" structureRef="com.craigstjean.workflow.service.RoomResolver" />
   <itemDefinition id="_6-roomNumberItem" structureRef="Integer" />
+
+  <itemDefinition id="_10-roomNumberItem" structureRef="Integer" />
 
   <process processType="Private" isExecutable="true" id="com.craigstjean.workflow.bpmn.hotel" name="Hotel Process" tns:packageName="com.craigstjean.workflow.bpmn" >
 
     <!-- process variables -->
-    <property id="roomResolver" itemSubjectRef="_roomResolverItem"/>
     <property id="roomNumber" itemSubjectRef="_roomNumberItem"/>
 
     <!-- nodes -->
@@ -199,9 +195,11 @@
     <userTask id="_6" name="Clerk Gives Room Number" >
       <ioSpecification>
         <dataInput id="_6_TaskNameInput" name="TaskName" />
+        <dataInput id="_6_ContentInput" name="Content" />
         <dataInput id="_6_GroupIdInput" name="GroupId" />
         <inputSet>
           <dataInputRefs>_6_TaskNameInput</dataInputRefs>
+          <dataInputRefs>_6_ContentInput</dataInputRefs>
           <dataInputRefs>_6_GroupIdInput</dataInputRefs>
         </inputSet>
         <outputSet>
@@ -215,6 +213,13 @@
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
+        <targetRef>_6_ContentInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">#{roomNumber}</from>
+          <to xsi:type="tFormalExpression">_6_ContentInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
         <targetRef>_6_GroupIdInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">Clerks</from>
@@ -222,18 +227,29 @@
         </assignment>
       </dataInputAssociation>
     </userTask>
-    <scriptTask id="_7" name="Look for Rooms" scriptFormat="http://www.java.com/java" >
-      <script>kcontext.setVariable("roomNumber", roomResolver.getAvailableRoomOrDefault(-1));</script>
-    </scriptTask>
     <exclusiveGateway id="_8" name="Gateway" gatewayDirection="Converging" />
     <endEvent id="_9" name="End" >
         <terminateEventDefinition />
     </endEvent>
+    <task id="_10" name="Get Room Number" tns:taskName="Get Room Number" >
+      <ioSpecification>
+        <dataOutput id="_10_roomNumberOutput" name="roomNumber" />
+        <inputSet>
+        </inputSet>
+        <outputSet>
+          <dataOutputRefs>_10_roomNumberOutput</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+      <dataOutputAssociation>
+        <sourceRef>_10_roomNumberOutput</sourceRef>
+        <targetRef>roomNumber</targetRef>
+      </dataOutputAssociation>
+    </task>
 
     <!-- connections -->
     <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
     <sequenceFlow id="_2-_3" sourceRef="_2" targetRef="_3" />
-    <sequenceFlow id="_7-_4" sourceRef="_7" targetRef="_4" />
+    <sequenceFlow id="_10-_4" sourceRef="_10" targetRef="_4" />
     <sequenceFlow id="_4-_5" sourceRef="_4" targetRef="_5" name="NoRoomNumber" tns:priority="1" >
       <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >// return roomNumber &lt;= 0;
 return ((Integer) kcontext.getVariable("roomNumber")).intValue() &lt;= 0;</conditionExpression>
@@ -242,10 +258,10 @@ return ((Integer) kcontext.getVariable("roomNumber")).intValue() &lt;= 0;</condi
       <conditionExpression xsi:type="tFormalExpression" language="http://www.java.com/java" >//return roomNumber &gt; 0;
 return ((Integer) kcontext.getVariable("roomNumber")).intValue() &gt; 0;</conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_3-_7" sourceRef="_3" targetRef="_7" />
     <sequenceFlow id="_5-_8" sourceRef="_5" targetRef="_8" />
     <sequenceFlow id="_6-_8" sourceRef="_6" targetRef="_8" />
     <sequenceFlow id="_8-_9" sourceRef="_8" targetRef="_9" />
+    <sequenceFlow id="_3-_10" sourceRef="_3" targetRef="_10" />
 
   </process>
 
@@ -261,22 +277,22 @@ return ((Integer) kcontext.getVariable("roomNumber")).intValue() &gt; 0;</condit
         <dc:Bounds x="301" y="56" width="169" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_4" >
-        <dc:Bounds x="653" y="56" width="48" height="48" />
+        <dc:Bounds x="685" y="56" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_5" >
-        <dc:Bounds x="734" y="16" width="236" height="48" />
+        <dc:Bounds x="766" y="16" width="236" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_6" >
-        <dc:Bounds x="734" y="96" width="236" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_7" >
-        <dc:Bounds x="502" y="56" width="119" height="48" />
+        <dc:Bounds x="766" y="96" width="236" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_8" >
-        <dc:Bounds x="1002" y="56" width="48" height="48" />
+        <dc:Bounds x="1034" y="56" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_9" >
-        <dc:Bounds x="1083" y="56" width="48" height="48" />
+        <dc:Bounds x="1115" y="56" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_10" >
+        <dc:Bounds x="502" y="56" width="151" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="_1-_2" >
         <di:waypoint x="40" y="80" />
@@ -286,33 +302,33 @@ return ((Integer) kcontext.getVariable("roomNumber")).intValue() &gt; 0;</condit
         <di:waypoint x="182" y="80" />
         <di:waypoint x="385" y="80" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_7-_4" >
-        <di:waypoint x="561" y="80" />
-        <di:waypoint x="677" y="80" />
+      <bpmndi:BPMNEdge bpmnElement="_10-_4" >
+        <di:waypoint x="577" y="80" />
+        <di:waypoint x="709" y="80" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_4-_5" >
-        <di:waypoint x="677" y="80" />
-        <di:waypoint x="852" y="40" />
+        <di:waypoint x="709" y="80" />
+        <di:waypoint x="884" y="40" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_4-_6" >
-        <di:waypoint x="677" y="80" />
-        <di:waypoint x="852" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_3-_7" >
-        <di:waypoint x="385" y="80" />
-        <di:waypoint x="561" y="80" />
+        <di:waypoint x="709" y="80" />
+        <di:waypoint x="884" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_5-_8" >
-        <di:waypoint x="852" y="40" />
-        <di:waypoint x="1026" y="80" />
+        <di:waypoint x="884" y="40" />
+        <di:waypoint x="1058" y="80" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_6-_8" >
-        <di:waypoint x="852" y="120" />
-        <di:waypoint x="1026" y="80" />
+        <di:waypoint x="884" y="120" />
+        <di:waypoint x="1058" y="80" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_8-_9" >
-        <di:waypoint x="1026" y="80" />
-        <di:waypoint x="1107" y="80" />
+        <di:waypoint x="1058" y="80" />
+        <di:waypoint x="1139" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_3-_10" >
+        <di:waypoint x="385" y="80" />
+        <di:waypoint x="577" y="80" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

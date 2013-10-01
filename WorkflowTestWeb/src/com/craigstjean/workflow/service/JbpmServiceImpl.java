@@ -9,6 +9,7 @@ import org.drools.KnowledgeBase;
 import org.drools.SystemEventListener;
 import org.drools.SystemEventListenerFactory;
 import org.drools.impl.EnvironmentFactory;
+import org.drools.persistence.jpa.JPAKnowledgeService;
 import org.drools.runtime.Environment;
 import org.drools.runtime.EnvironmentName;
 import org.drools.runtime.StatefulKnowledgeSession;
@@ -30,7 +31,9 @@ public class JbpmServiceImpl implements JbpmService {
 	@Autowired
 	private KnowledgeBase kbase;
 	
-	private Environment env = null;
+	@Autowired
+	private RoomNumberHandlerImpl roomNumberHandler;
+	
 	private TaskService taskService = null;
 	private Map<String, StatefulKnowledgeSession> ksessions = new HashMap<String, StatefulKnowledgeSession>();
 	
@@ -41,12 +44,13 @@ public class JbpmServiceImpl implements JbpmService {
 			return ksession;
 		}
 		
-		ksession = kbase.newStatefulKnowledgeSession(null, getEnvironment());
+		ksession = JPAKnowledgeService.newStatefulKnowledgeSession(kbase, null, getEnvironment());
 		
 		LocalHTWorkItemHandler humanTaskHandler = new LocalHTWorkItemHandler(getTaskService(), ksession);
 		humanTaskHandler.setLocal(true);
 		humanTaskHandler.connect();
 		ksession.getWorkItemManager().registerWorkItemHandler("Human Task", humanTaskHandler);
+		ksession.getWorkItemManager().registerWorkItemHandler("Get Room Number", roomNumberHandler);
 		
 		ksessions.put(flowPath, ksession);
 		
@@ -54,13 +58,10 @@ public class JbpmServiceImpl implements JbpmService {
 	}
 
 	private Environment getEnvironment() {
-		if (env == null) {
-			env = EnvironmentFactory.newEnvironment();
-	        env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, emf);
-	        env.set(EnvironmentName.TRANSACTION_MANAGER, new ContainerManagedTransactionManager());
-	        env.set(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER, new JpaProcessPersistenceContextManager(env));
-		}
-		
+		Environment env = EnvironmentFactory.newEnvironment();
+        env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, emf);
+        env.set(EnvironmentName.TRANSACTION_MANAGER, new ContainerManagedTransactionManager());
+        env.set(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER, new JpaProcessPersistenceContextManager(env));
 		return env;
 	}
 	

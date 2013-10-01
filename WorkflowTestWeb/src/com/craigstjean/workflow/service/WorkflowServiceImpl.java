@@ -1,25 +1,24 @@
 package com.craigstjean.workflow.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.ProcessInstance;
+import org.jbpm.task.Content;
 import org.jbpm.task.identity.UserGroupCallback;
 import org.jbpm.task.identity.UserGroupCallbackManager;
 import org.jbpm.task.query.TaskSummary;
+import org.jbpm.task.utils.ContentMarshallerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
+
+@Repository
 public class WorkflowServiceImpl implements WorkflowService {
 	@Autowired
 	private JbpmService jbpmService;
-	
-	@Autowired
-	private RoomResolver roomResolver;
 	
 	public WorkflowServiceImpl() {
 		UserGroupCallbackManager.getInstance().setCallback(new UserGroupCallback() {
@@ -53,27 +52,38 @@ public class WorkflowServiceImpl implements WorkflowService {
 	}
 	
 	@Override
+	@Transactional
 	public Long startProcess() {
 		StatefulKnowledgeSession ksession = jbpmService.getSession("com/craigstjean/workflow/bpmn/hotel.bpmn");
-		
-		Map<String, Object> variables = new HashMap<String, Object>();
-		variables.put("roomResolver", roomResolver);
-		variables.put("roomNumber", -1);
-		ProcessInstance processInstance = ksession.startProcess("com.craigstjean.workflow.bpmn.hotel", variables);
+		ProcessInstance processInstance = ksession.startProcess("com.craigstjean.workflow.bpmn.hotel", null);
 		return processInstance.getId();
 	}
 	
 	@Override
 	public List<TaskSummary> getTasksForUser(String user) {
-		return jbpmService.getTaskService().getTasksAssignedAsPotentialOwner(user, "en-UK");
+		List<TaskSummary> taskSummaries = jbpmService.getTaskService().getTasksAssignedAsPotentialOwner(user, "en-UK");
+		
+		// TODO bad code, here just to show how to get the data
+		for (TaskSummary taskSummary : taskSummaries) {
+			if (taskSummary.getName().equals("Clerk Gives Room Number")) {
+				long contentId = jbpmService.getTaskService().getTask(taskSummary.getId()).getTaskData().getDocumentContentId();
+				Content content = jbpmService.getTaskService().getContent(contentId);
+				Object obj = ContentMarshallerHelper.unmarshall(content.getContent(), null);
+				taskSummary.setDescription(obj.toString());
+			}
+		}
+		
+		return taskSummaries;
 	}
 	
 	@Override
+	@Transactional
 	public void startTask(String userId, Long taskId) {
 		jbpmService.getTaskService().start(taskId, userId);
 	}
 	
 	@Override
+	@Transactional
 	public void completeTask(String userId, Long taskId) {
 		jbpmService.getTaskService().complete(taskId, userId, null);
 	}

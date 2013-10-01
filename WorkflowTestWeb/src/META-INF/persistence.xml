@@ -40,7 +40,8 @@
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
 			<property name="hibernate.transaction.factory_class" value="org.hibernate.transaction.CMTTransactionFactory" />
-			<property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.WebSphereExtendedJtaPlatform" />
+			<!--<property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.WebSphereExtendedJtaPlatform" />-->
+			<property name="hibernate.transaction.jta.platform" value="com.craigstjean.workflow.tx.WebSphereUOWTransactionLookup" />
 			<property name="hibernate.transaction.flush_before_completion" value="true" />
 			<property name="hibernate.transaction.auto_close_session" value="true" />
 			<property name="hibernate.show_sql" value="false" />

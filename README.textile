@@ -24,19 +24,7 @@ h2. Project Preparation
 # Create jdbc/jBPM_TestDS Data Source in WebSphere pointing to Oracle (then restart WebSphere)
 # Deploy EAR project to WebSphere
 
-h1. Questionable Items
+h2. Forum Reference
 
-* Is JbpmService used in this way thread safe?
-* Is JbpmService used in this way causing overhead?
-* Is the way roomResolver is passed into the flow correct?  Better way?
-* Variables are defined in the bpmn file and passed as parameters -- correct?
-
-h1. Current Issues
-
-_None!_
-
-h3. Fixed Issues
-
-* Completing the first task (should be Customer Requests Room) does not move the task to the next step
-* Completing the second task causes "unable to execute ReturnValueEvaluator"
+https://community.jboss.org/message/838601#838601
 
