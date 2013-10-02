@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.craigstjean.workflow.service.SystemPreferenceDao;
 import com.craigstjean.workflow.service.WorkflowService;
 
 @Controller
@@ -21,11 +22,20 @@ public class HomeController {
 	@Autowired
 	private WorkflowService workflow;
 	
+	@Autowired
+	private SystemPreferenceDao systemPreferenceDao;
+	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(
 			@RequestParam(value = "user", required = false, defaultValue = "") String user,
 			final HttpSession session,
 			final Model model) {
+		if ("".equals(user)) {
+			user = systemPreferenceDao.getPreference("user");
+		} else {
+			systemPreferenceDao.setPreference("user", user);
+		}
+		
 		session.setAttribute("user", user);
 		
 		List<String> users = new ArrayList<String>();

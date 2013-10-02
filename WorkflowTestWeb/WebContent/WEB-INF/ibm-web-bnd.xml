@@ -7,5 +7,6 @@
 
 	<virtual-host name="default_host" />
 
+	<resource-ref name="jdbc/App_TestDS" binding-name="jdbc/App_TestDS" />
 	<resource-ref name="jdbc/jBPM_TestDS" binding-name="jdbc/jBPM_TestDS" />
 </web-bnd>

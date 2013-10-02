@@ -13,9 +13,9 @@
 	       http://drools.org/schema/drools-spring http://anonsvn.jboss.org/repos/labs/labs/jbossrules/trunk/drools-container/drools-spring/src/main/resources/org/drools/container/spring/drools-spring.xsd">
        
     <bean id="entityManagerFactory" class="javax.persistence.Persistence" factory-method="createEntityManagerFactory">
-		<constructor-arg type="java.lang.String" value="WorkflowTestUnit" />
+		<constructor-arg type="java.lang.String" value="AppUnit" />
 	</bean>
-
+	
 	<bean id="transactionManager" class="org.springframework.transaction.jta.WebSphereUowTransactionManager" />
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<tx:annotation-driven proxy-target-class="true" />

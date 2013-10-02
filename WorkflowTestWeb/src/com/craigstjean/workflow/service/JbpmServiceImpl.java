@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 import org.drools.KnowledgeBase;
 import org.drools.SystemEventListener;
@@ -25,8 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JbpmServiceImpl implements JbpmService {
-	@Autowired
-	private EntityManagerFactory emf;
+	private EntityManagerFactory jbpmEmf;
 	
 	@Autowired
 	private KnowledgeBase kbase;
@@ -56,10 +56,18 @@ public class JbpmServiceImpl implements JbpmService {
 		
 		return ksession;
 	}
+	
+	private EntityManagerFactory getEntityManagerFactory() {
+		if (jbpmEmf == null) {
+			jbpmEmf = Persistence.createEntityManagerFactory("jBPMUnit");
+		}
+		
+		return jbpmEmf;
+	}
 
 	private Environment getEnvironment() {
 		Environment env = EnvironmentFactory.newEnvironment();
-        env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, emf);
+        env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, getEntityManagerFactory());
         env.set(EnvironmentName.TRANSACTION_MANAGER, new ContainerManagedTransactionManager());
         env.set(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER, new JpaProcessPersistenceContextManager(env));
 		return env;
@@ -69,7 +77,7 @@ public class JbpmServiceImpl implements JbpmService {
 	public LocalTaskService getTaskService() {
 		if (taskService == null) {
 			SystemEventListener systemEventListener = SystemEventListenerFactory.getSystemEventListener();
-			taskService = new TaskService(emf, systemEventListener);
+			taskService = new TaskService(getEntityManagerFactory(), systemEventListener);
 			
 			TaskServiceSession taskSession = taskService.createSession();
 			// TODO here temporarily

@@ -1,94 +1,49 @@
-
     drop table Attachment cascade constraints;
-
     drop table BooleanExpression cascade constraints;
-
     drop table Content cascade constraints;
-
     drop table Deadline cascade constraints;
-
     drop table Delegation_delegates cascade constraints;
-
     drop table Escalation cascade constraints;
-
     drop table EventTypes cascade constraints;
-
     drop table I18NText cascade constraints;
-
     drop table NodeInstanceLog cascade constraints;
-
     drop table Notification cascade constraints;
-
     drop table Notification_BAs cascade constraints;
-
     drop table Notification_Recipients cascade constraints;
-
     drop table Notification_email_header cascade constraints;
-
     drop table OrganizationalEntity cascade constraints;
-
     drop table PeopleAssignments_BAs cascade constraints;
-
     drop table PeopleAssignments_ExclOwners cascade constraints;
-
     drop table PeopleAssignments_PotOwners cascade constraints;
-
     drop table PeopleAssignments_Recipients cascade constraints;
-
     drop table PeopleAssignments_Stakeholders cascade constraints;
-
     drop table ProcessInstanceInfo cascade constraints;
-
     drop table ProcessInstanceLog cascade constraints;
-
     drop table Reassignment cascade constraints;
-
     drop table Reassignment_potentialOwners cascade constraints;
-
     drop table SessionInfo cascade constraints;
-
     drop table SubTasksStrategy cascade constraints;
-
     drop table Task cascade constraints;
-
     drop table VariableInstanceLog cascade constraints;
-
     drop table WorkItemInfo cascade constraints;
-
     drop table email_header cascade constraints;
-
     drop table task_comment cascade constraints;
-
+    
     drop sequence ATTACHMENT_ID_SEQ;
-
     drop sequence BOOLEANEXPR_ID_SEQ;
-
     drop sequence COMMENT_ID_SEQ;
-
     drop sequence CONTENT_ID_SEQ;
-
     drop sequence DEADLINE_ID_SEQ;
-
     drop sequence EMAILNOTIFHEAD_ID_SEQ;
-
     drop sequence ESCALATION_ID_SEQ;
-
     drop sequence I18NTEXT_ID_SEQ;
-
     drop sequence NODE_INST_LOG_ID_SEQ;
-
     drop sequence NOTIFICATION_ID_SEQ;
-
     drop sequence PROC_INST_LOG_ID_SEQ;
-
     drop sequence REASSIGNMENT_ID_SEQ;
-
     drop sequence SESSIONINFO_ID_SEQ;
-
     drop sequence VAR_INST_LOG_ID_SEQ;
-
     drop sequence WORKITEMINFO_ID_SEQ;
-
     drop sequence hibernate_sequence;
 
     create table Attachment (
@@ -578,33 +533,18 @@
         references OrganizationalEntity;
 
     create sequence ATTACHMENT_ID_SEQ;
-
     create sequence BOOLEANEXPR_ID_SEQ;
-
     create sequence COMMENT_ID_SEQ;
-
     create sequence CONTENT_ID_SEQ;
-
     create sequence DEADLINE_ID_SEQ;
-
     create sequence EMAILNOTIFHEAD_ID_SEQ;
-
     create sequence ESCALATION_ID_SEQ;
-
     create sequence I18NTEXT_ID_SEQ;
-
     create sequence NODE_INST_LOG_ID_SEQ;
-
     create sequence NOTIFICATION_ID_SEQ;
-
     create sequence PROC_INST_LOG_ID_SEQ;
-
     create sequence REASSIGNMENT_ID_SEQ;
-
     create sequence SESSIONINFO_ID_SEQ;
-
     create sequence VAR_INST_LOG_ID_SEQ;
-
     create sequence WORKITEMINFO_ID_SEQ;
-
     create sequence hibernate_sequence;

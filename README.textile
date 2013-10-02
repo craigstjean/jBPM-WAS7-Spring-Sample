@@ -5,6 +5,8 @@ This is a sample jBPM 5.4 project that leverages the following technologies:
 * jBPM 5.4
 * WebSphere Application Server 7.0
 * JPA 1
+** One application persistence unit
+** One jBPM persistence unit
 * Oracle
 * Spring MVC
 
@@ -21,7 +23,9 @@ h2. Project Preparation
 
 # Load WorkflowTestWeb/doc/jbpmschemaexport.sql into Oracle
 # Load WorkflowTestWeb/doc/htschemaexport.sql into Oracle
-# Create jdbc/jBPM_TestDS Data Source in WebSphere pointing to Oracle (then restart WebSphere)
+# Create jdbc/jBPM_TestDS Data Source in WebSphere pointing to Oracle
+# Create jdbc/App_TestDS Data Source in WebSphere pointing to Oracle
+## Restart WebSphere
 # Deploy EAR project to WebSphere
 
 h2. Forum Reference

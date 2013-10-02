@@ -42,6 +42,12 @@
 	</session-config>
 
 	<resource-ref>
+		<res-ref-name>jdbc/App_TestDS</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+	<resource-ref>
 		<res-ref-name>jdbc/jBPM_TestDS</res-ref-name>
 		<res-type>javax.sql.DataSource</res-type>
 		<res-auth>Container</res-auth>
@@ -49,7 +55,11 @@
 	</resource-ref>
 	
 	<persistence-unit-ref>
-		<persistence-unit-ref-name>persistence/WorkflowTestUnit</persistence-unit-ref-name>
-		<persistence-unit-name>WorkflowTestUnit</persistence-unit-name>
+		<persistence-unit-ref-name>persistence/AppUnit</persistence-unit-ref-name>
+		<persistence-unit-name>AppUnit</persistence-unit-name>
+	</persistence-unit-ref>
+	<persistence-unit-ref>
+		<persistence-unit-ref-name>persistence/jBPMUnit</persistence-unit-ref-name>
+		<persistence-unit-name>jBPMUnit</persistence-unit-name>
 	</persistence-unit-ref>
 </web-app>
